@@ -64,7 +64,7 @@ Step 5: Installing chart
 
   Copy and Paste the output in a notepad
   
-  ![Screenshot from 2023-02-21 18-12-00](https://user-images.githubusercontent.com/122020679/220347885-934d951d-9ef1-41e2-94e0-a86780015487.png)
+  ![Screenshot from 2023-02-22 11-19-34](https://user-images.githubusercontent.com/122020679/220534549-5aa2dcd2-f0b3-4dd1-9786-bc002fdf9193.png)
 
   We will need this information to access Jenkins Dashboard.
   
@@ -114,7 +114,7 @@ Step 9: Create Persistent Volume
 
 Step 10: Create Persistent Volume Claim
 
-  Before craeting new persistent volume claim, we need to delete old persistent volume claim
+  Before creating new persistent volume claim, we need to delete old persistent volume claim
   
     > kubectl get pvc -n jenkins
     
@@ -129,3 +129,77 @@ Step 10: Create Persistent Volume Claim
     > kubectl get pvc -n jenkins
     
   ![Screenshot from 2023-02-21 19-00-33](https://user-images.githubusercontent.com/122020679/220358108-aa8d3e09-7140-4856-a3b7-546a22476849.png)
+  
+Step 11: Editing deployment.apps
+
+    > kubectl get pvc -n jenkins
+    
+  Copy the pvc name: jenkins-pv-claim
+   
+  ![Screenshot from 2023-02-22 10-51-30](https://user-images.githubusercontent.com/122020679/220530134-bbe07a54-2efe-4a54-aec1-b2c37fb9f298.png)
+  
+  Now open deployment.apps edit it using following command:
+
+    > kubectl edit deployment.apps jenkins -n jenkins
+    
+  In volume, modify "jenkins" to "jenkins-pv-claim"
+    
+  Before:
+  
+  ![Screenshot from 2023-02-22 10-57-09](https://user-images.githubusercontent.com/122020679/220531179-932cc89c-49d9-4d96-8513-bc0573727b69.png)
+  
+  After:
+  
+  ![Screenshot from 2023-02-22 10-59-11](https://user-images.githubusercontent.com/122020679/220531394-81de7f65-cb75-436d-ad08-239921786ef6.png)
+  
+  ![Screenshot from 2023-02-22 10-59-58](https://user-images.githubusercontent.com/122020679/220531466-8a610ef3-72c0-426e-8eb0-c031ce15d99d.png)
+
+Step 12: Get Pods
+
+    > kubectl get pods -n jenkins
+    
+  ![Screenshot from 2023-02-22 11-01-23](https://user-images.githubusercontent.com/122020679/220531896-8f7aa0df-e10b-4482-b956-bab919fcde84.png)
+  
+  Our pod is running now.
+  
+Step 13: Accessing Jenkins Dashboard
+
+  Since we are using minikube, we will need to minikube ip and the port number from storage volume class
+  
+    > minikube ip
+    
+    > kubectl get svc -n jenkins
+    
+  ![Screenshot from 2023-02-22 11-14-55](https://user-images.githubusercontent.com/122020679/220533767-6f188ec3-3c41-40c5-84eb-c2fc344cc481.png)
+
+  Copy minikube ip and port number in browser
+  
+    > <minikube ip>:<port number>
+    
+   ![Screenshot from 2023-02-22 11-17-30](https://user-images.githubusercontent.com/122020679/220534187-68b651a4-b8d4-40c0-b920-088e4705c958.png)
+  
+Step 14: Get Jenkins dashboard password.
+
+  Copy and paste the command which we got from the output of "helm install"
+  
+  ![Screenshot from 2023-02-22 11-21-09](https://user-images.githubusercontent.com/122020679/220534794-887502e8-d124-487b-82ed-3dcd36781a47.png)
+
+  Command: 
+  
+    > echo Password: $(kubectl get secret --namespace jenkins jenkins -o jsonpath="{.data.jenkins-password}" | base64 -d)
+    
+  ![Screenshot from 2023-02-22 11-22-54](https://user-images.githubusercontent.com/122020679/220534946-80d56088-e862-40be-9f6f-fb525d27efe3.png)
+
+Step 15: Login
+
+   Copy the Password and go to Jenkins Dashboard
+   
+   Enter username and password
+   
+   ![Screenshot from 2023-02-22 11-25-08](https://user-images.githubusercontent.com/122020679/220535374-0e283aca-888c-4f99-b057-d9bece1e823a.png)
+   
+   Click "sign in"
+   
+   ![Screenshot from 2023-02-21 16-55-13](https://user-images.githubusercontent.com/122020679/220535942-10e446a8-ade1-49ed-8159-2ef68300d5d2.png)
+
+***We have successfully completed this tutorial!***
